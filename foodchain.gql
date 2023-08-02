@@ -1,0 +1,146 @@
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Lion'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Vulture'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Cheetah'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Giraffe'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Elephant'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Insect {name:'Termite'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Meerkat'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Warthog'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Insect {name:'Grasshopper'}) SET x.id = ID(x)"
+
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Serval'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Topy'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Hyena'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Zebra'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Black Pantha'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Aardvark'}) SET x.id = ID(x)"
+
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Pangolin'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Insect {name:'Ant'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Caracal'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Gazelle'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Wildebeert'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Animal {name:'Mouse'}) SET x.id = ID(x)"
+
+GRAPH.QUERY foodchain "Create (x:Plant {name:'Trees'}) SET x.id = ID(x)"
+GRAPH.QUERY foodchain "Create (x:Plant {name:'Grass and Shrubs'}) SET x.id = ID(x)"
+
+GRAPH.QUERY foodchain "MATCH (n{name:'Lion'}),(m{name:'Cheetah'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Lion'}),(m{name:'Giraffe'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Lion'}),(m{name:'Warthog'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Lion'}),(m{name:'Topy'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Lion'}),(m{name:'Zebra'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Lion'}),(m{name:'Hyena'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Lion'}),(m{name:'Wildebeert'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Lion'}),(m{name:'Black Pantha'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Lion'}),(m{name:'Gazelle'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Lion'}),(m{name:'Caracal'}) Create (n)-[:Eat]->(m)"
+
+GRAPH.QUERY foodchain "MATCH (n{name:'Cheetah'}),(m{name:'Giraffe'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Cheetah'}),(m{name:'Elephant'}) Create (n)-[:Eat]->(m)"
+
+GRAPH.QUERY foodchain "MATCH (n{name:'Vulture'}),(m{name:'Cheetah'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Vulture'}),(m{name:'Giraffe'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Vulture'}),(m{name:'Elephant'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Vulture'}),(m{name:'Zebra'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Vulture'}),(m{name:'Gazelle'}) Create (n)-[:Eat]->(m)"
+
+GRAPH.QUERY foodchain "MATCH (n{name:'Hyena'}),(m{name:'Meerkat'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Hyena'}),(m{name:'Elephant'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Hyena'}),(m{name:'Zebra'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Hyena'}),(m{name:'Aardvark'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Hyena'}),(m{name:'Wildebeert'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Hyena'}),(m{name:'Black Pantha'}) Create (n)-[:Eat]->(m)"
+
+GRAPH.QUERY foodchain "MATCH (n{name:'Black Pantha'}),(m{name:'Warthog'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Black Pantha'}),(m{name:'Zebra'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Black Pantha'}),(m{name:'Wildebeert'}) Create (n)-[:Eat]->(m)"
+
+GRAPH.QUERY foodchain "MATCH (n{name:'Caracal'}),(m{name:'Mouse'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Caracal'}),(m{name:'Gazelle'}) Create (n)-[:Eat]->(m)"
+
+GRAPH.QUERY foodchain "MATCH (n{name:'Serval'}),(m{name:'Termite'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Serval'}),(m{name:'Grasshopper'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Serval'}),(m{name:'Mouse'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Serval'}),(m{name:'Wildebeert'}) Create (n)-[:Eat]->(m)"
+
+GRAPH.QUERY foodchain "MATCH (n{name:'Meerkat'}),(m{name:'Grasshopper'}) Create (n)-[:Eat]->(m)"
+
+GRAPH.QUERY foodchain "MATCH (n{name:'Pangolin'}),(m{name:'Ant'}) Create (n)-[:Eat]->(m)"
+
+GRAPH.QUERY foodchain "MATCH (n{name:'Aardvark'}),(m{name:'Termite'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Aardvark'}),(m{name:'Ant'}) Create (n)-[:Eat]->(m)"
+
+GRAPH.QUERY foodchain "MATCH (n{name:'Giraffe'}),(m{name:'Trees'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Elephant'}),(m{name:'Trees'}) Create (n)-[:Eat]->(m)"
+
+GRAPH.QUERY foodchain "MATCH (n{name:'Termite'}),(m{name:'Grass and Shrubs'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Grasshopper'}),(m{name:'Grass and Shrubs'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Warthog'}),(m{name:'Grass and Shrubs'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Topy'}),(m{name:'Grass and Shrubs'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Zebra'}),(m{name:'Grass and Shrubs'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Ant'}),(m{name:'Grass and Shrubs'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Gazelle'}),(m{name:'Grass and Shrubs'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Wildebeert'}),(m{name:'Grass and Shrubs'}) Create (n)-[:Eat]->(m)"
+GRAPH.QUERY foodchain "MATCH (n{name:'Mouse'}),(m{name:'Grass and Shrubs'}) Create (n)-[:Eat]->(m)"
+
+
+Sambar deer
+Silvery lutung
+Spotted linsang
+Banded linsang
+https://wildlifethailand.com/blog-posts/mammals/230-hog-badger-arctonyx-collaris-2#:~:text=The%20hog%20badger%20is%20predated,the%20leopard%20(Panthera%20pardus).
+Siamang
+Northern Sumatran rhinoceros
+Malayan tapir
+Lesser false vampire bat
+Large Indian civet
+Indian muntjac (Deer)
+https://en.wikipedia.org/wiki/List_of_species_native_to_Thailand
+
+
+## Apex Predator
+Tiger
+Clouded Leopard
+Siamese crocodile
+
+
+## Carnivor
+Ussuri dhole
+Sun Bear
+Siberian weasel
+Binturong bearcat
+Common Treeshrew
+
+Banded Linsang
+Spotted linsang
+
+
+## Reptile
+Hog badger
+Gekko smithii
+rainbow frog
+King cobra
+Varan
+
+
+## Primates
+Agile Gibbon
+
+## insectivorous / anteaters
+Sunda pangolin The Sunda pangolin's main predators are humans, tigers, and the clouded leopard.
+
+
+
+## Herbivore
+Bufalo
+Asian Elephant
+
+## Rodent
+Oriental Tree Squirrel
+
+
+#Insect
+butterflies
+Cicada
+Ant

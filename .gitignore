@@ -1,0 +1,9 @@
+# Binaries for programs and plugins
+*
+*/
+!.gitignore
+!.gitattributes
+!README.md
+!v.mod
+!*.v
+!*.gql
