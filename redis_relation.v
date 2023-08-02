@@ -1,6 +1,5 @@
 module redis
 
-
 // GRAPH.QUERY foodchain "MATCH (n:Animal {name:'Lion'})-[r:Eat]-(m:Animal {name:'Hyena'}) DELETE r"
 pub fn (mut r Redis) realtion_create<T, R, U>(t T, rr R, u U) bool {
 	if t.id == 0 {
@@ -9,8 +8,6 @@ pub fn (mut r Redis) realtion_create<T, R, U>(t T, rr R, u U) bool {
 	if u.id == 0 {
 		panic('Redis is trying to delete a relation without id')
 	}
-
-	db := r.db
 
 	@type := t.@type
 	src_node := t.src_node
@@ -30,7 +27,7 @@ pub fn (mut r Redis) realtion_create<T, R, U>(t T, rr R, u U) bool {
 	if r.result(.table[0].table.len) == 0 {
 		return false
 	}
-	return r.result() == "Relationships deleted: 1"
+	return r.result() == 'Relationships deleted: 1'
 }
 
 // N: Node
@@ -66,11 +63,10 @@ pub fn (mut r Redis) realtion_create<T, R, U>(t T, rr R, u U) bool {
 // 	return r.result.table[0].table[0].content.contains('Nodes deleted: 1')
 // }
 pub struct Relation {
-	pub mut:
+pub mut:
 	@type string
-	id int
+	id    int
 }
-
 
 // GRAPH.QUERY foodchain "MATCH (n:Animal {name:'Lion'})-[r:Eat]-(m:Animal {name:'Hyena'}) DELETE r"
 pub fn (mut r Redis) relation_delete<T>(mut t T) bool {

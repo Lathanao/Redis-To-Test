@@ -28,9 +28,9 @@ pub mut:
 }
 
 fn test_node_hello() {
-	mut r := new(dbname) or {panic(err)}
+	mut r := new(dbname) or { panic(err) }
 	assert r.connected == true
-	defer{
+	defer {
 		r.close()
 		assert r.connected == false
 	}
@@ -38,9 +38,9 @@ fn test_node_hello() {
 }
 
 fn test_delete_db() {
-	mut r := new(dbname) or {panic(err)}
+	mut r := new(dbname) or { panic(err) }
 	assert r.connected == true
-	defer{
+	defer {
 		r.close()
 		assert r.connected == false
 	}
@@ -58,9 +58,9 @@ fn test_delete_db() {
 }
 
 fn test_insert_by_file() {
-	mut r := new(dbname) or {panic(err)}
+	mut r := new(dbname) or { panic(err) }
 	assert r.connected == true
-	defer{
+	defer {
 		r.close()
 		assert r.connected == false
 	}
@@ -83,7 +83,7 @@ fn test_insert_by_file() {
 				assert r.result.table[0].table[0].content == 'Nodes created: 1'
 				assert r.result.table[0].table[1].content == 'Properties set: 2'
 			}
-			5  {// typically, result for node with new label contains 5 elements
+			5 { // typically, result for node with new label contains 5 elements
 				assert r.result.table[0].table[0].content == 'Labels added: 1'
 				assert r.result.table[0].table[1].content == 'Nodes created: 1'
 				assert r.result.table[0].table[2].content == 'Properties set: 2'
@@ -95,22 +95,21 @@ fn test_insert_by_file() {
 	}
 }
 
-
 fn test_count() {
-	mut r := new(dbname) or {panic(err)}
+	mut r := new(dbname) or { panic(err) }
 	assert r.connected == true
-	defer{
+	defer {
 		r.close()
 		assert r.connected == false
 	}
 
-	r.query("GRAPH.QUERY foodchain \"MATCH (n:Animal) RETURN COUNT(n)\"")
+	r.query('GRAPH.QUERY foodchain "MATCH (n:Animal) RETURN COUNT(n)"')
 	assert r.result.table[1].table[0].table[0].content.int() == 14
 
-	r.query("GRAPH.QUERY foodchain \"MATCH (n:Plant) RETURN COUNT(n)\"")
+	r.query('GRAPH.QUERY foodchain "MATCH (n:Plant) RETURN COUNT(n)"')
 	assert r.result.table[1].table[0].table[0].content.int() == 1
 
-	r.query("GRAPH.QUERY foodchain \"MATCH (n:Insect) RETURN COUNT(n)\"")
+	r.query('GRAPH.QUERY foodchain "MATCH (n:Insect) RETURN COUNT(n)"')
 	assert r.result.table[1].table[0].table[0].content.int() == 2
 
 	println(r.result)
@@ -118,23 +117,23 @@ fn test_count() {
 	println(r.result())
 }
 
-
 fn test_node_create() {
-	mut r := new(dbname) or {panic(err)}
+	mut r := new(dbname) or { panic(err) }
 	assert r.connected == true
-	defer{
+	defer {
 		r.close()
 		assert r.connected == false
 	}
 
-	mut g := Reptile{name:"Gecko"}
+	mut g := Reptile{
+		name: 'Gecko'
+	}
 	assert r.node_create(g) == true
-	assert r.result() == "Labels added: 1"
-	assert r.result() == "Nodes created: 1"
-	assert r.result() == "Properties set: 2"
-	assert r.result() == "Cached execution: 0"
+	assert r.result() == 'Labels added: 1'
+	assert r.result() == 'Nodes created: 1'
+	assert r.result() == 'Properties set: 2'
+	assert r.result() == 'Cached execution: 0'
 }
-
 
 // fn test_node_search() {
 // 	mut r := new(dbname) or {panic(err)}
@@ -169,7 +168,6 @@ fn test_node_create() {
 // 		}
 // 	}
 // }
-
 
 // fn test_update_nodes() {
 // 	mut r := new(dbname) or { panic(err) }
@@ -211,7 +209,6 @@ fn test_node_create() {
 // 		}
 // 	}
 // }
-
 
 // fn test_create_relations() {
 // 	mut r := new(dbname) or {panic(err)}

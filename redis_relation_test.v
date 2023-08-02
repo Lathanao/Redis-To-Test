@@ -9,16 +9,16 @@ const (
 
 pub struct Person {
 pub mut:
-	name string
-	age int
+	name  string
+	age   int
 	child []Person
-	id int
+	id    int
 }
 
 fn test_delete_db() {
-	mut r := new(dbname) or {panic(err)}
+	mut r := new(dbname) or { panic(err) }
 	assert r.connected == true
-	defer{
+	defer {
 		r.close()
 		assert r.connected == false
 	}
@@ -34,28 +34,32 @@ fn test_delete_db() {
 }
 
 fn test_node_create() {
-	mut r := new(dbname) or {panic(err)}
+	mut r := new(dbname) or { panic(err) }
 	assert r.connected == true
-	defer{
+	defer {
 		r.close()
 		assert r.connected == false
 	}
 
-	leo := Person{name:"Leo"}
+	leo := Person{
+		name: 'Leo'
+	}
 
 	r.node_create(leo)
 	assert r.node_exist(leo) == true
 }
 
 fn test_node_delete() {
-	mut r := new(dbname) or {panic(err)}
+	mut r := new(dbname) or { panic(err) }
 	assert r.connected == true
-	defer{
+	defer {
 		r.close()
 		assert r.connected == false
 	}
 
-	lea := Person{name:"lea"}
+	lea := Person{
+		name: 'lea'
+	}
 	r.node_create(lea)
 	lea_node := r.node_search(lea)
 	assert r.node_exist(lea_node) == true
@@ -64,38 +68,42 @@ fn test_node_delete() {
 	assert r.node_exist(lea_node) == false
 }
 
-
-
 fn test_query_result_1() {
-	mut r := new(dbname) or {panic(err)}
+	mut r := new(dbname) or { panic(err) }
 	assert r.connected == true
-	defer{
+	defer {
 		r.close()
 		assert r.connected == false
 	}
 
-	q := "GRAPH.QUERY test_redis \"MATCH (x:Person) RETURN count(x)\""
+	q := 'GRAPH.QUERY test_redis "MATCH (x:Person) RETURN count(x)"'
 	r.query(q)
 
 	assert r.result().int() == 1
 }
 
 fn test_node_update() {
-	mut r := new(dbname) or {panic(err)}
+	mut r := new(dbname) or { panic(err) }
 	assert r.connected == true
-	defer{
+	defer {
 		r.close()
 		assert r.connected == false
 	}
 
-	leo := Person{name:"Leo"}
+	leo := Person{
+		name: 'Leo'
+	}
 	r.node_create(leo)
-	lea := Person{name:"Lea"}
+	lea := Person{
+		name: 'Lea'
+	}
 	r.node_create(lea)
 
-	criteria := Person{name: "Lea"}
+	criteria := Person{
+		name: 'Lea'
+	}
 	mut first_lea := r.node_search(criteria)
-	first_lea.name = "Lea_modified"
+	first_lea.name = 'Lea_modified'
 	first_lea.age = 20
 
 	r.node_update(first_lea)

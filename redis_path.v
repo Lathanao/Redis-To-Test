@@ -8,7 +8,6 @@ pub fn (mut r Redis) path<T, R, U>(t T, rl R, u U) {
 
 	// struct_name := typeof(t).name.trim(".")
 
-
 	// GRAPH.QUERY $db "MATCH path = (a{name:'Lion'}) -[:eat]-> (b{name:'Trees'}) RETURN path"
 
 	// q := ("GRAPH.QUERY $db \"CREATE (:$struct_name {$data})\"")
@@ -19,10 +18,5 @@ pub fn (mut r Redis) path<T, R, U>(t T, rl R, u U) {
 	// }
 }
 
-
-
-
-
-pub fn (mut r Redis) sortherpath<T>(t T)  {
-
+pub fn (mut r Redis) sortherpath<T>(t T) {
 }
