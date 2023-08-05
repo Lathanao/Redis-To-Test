@@ -22,12 +22,14 @@ fn test_delete_db() {
 		assert r.connected == false
 	}
 
-	for d in r.query('KEYS *').table.clone() {
+	for d in r.rawquery('KEYS *').table.clone() {
 		if d.content.match_glob('test_*') {
-			r.query('DEL ' + d.content)
+			r.rawquery('DEL ' + d.content)
 			assert r.result.content.int() == 1
 			assert r.result.table.len == 0
 			eprint(term.red('>>> Database ' + d.content + ' deleted') + '\n')
+		}else {
+			println(term.green('>>> Database ' + d.content + ' not deleted'))
 		}
 	}
 }
@@ -51,9 +53,13 @@ fn test_node_delete() {
 	defer {
 		r.close()
 	}
+	leo := Person{
+		name: 'Leo'
+	}
 	lea := Person{
 		name: 'Lea'
 	}
+	r.node_create(leo)
 	r.node_create(lea)
 	lea_node := r.node_search(lea)
 	assert r.node_exist(lea_node) == true

@@ -165,6 +165,16 @@ fn (mut r Redis) grab() RedisGrab {
 fn cipher_data_format<T>(t T) string {
 	line := remove_json_child_struture(json.encode(t))
 
+	// println("==============")
+	// println(t)
+	// println(json.encode(t))
+	// println(remove_json_child_struture(json.encode(t)))
+
+	// println("==============")
+	// println(typeof(line).name)
+	// println(line)
+	// println("==============")
+
 	mut ll := ''
 	for lll in line.trim('{}').split(',') {
 		mut l := lll
@@ -202,8 +212,8 @@ fn cipher_data_format<T>(t T) string {
 // will be returned as
 // {"name":"Tom","age":20,"child":[],"id":0}
 fn remove_json_child_struture(s string) string {
-	index_min := s.index('[') or { 0 }
-	index_max := s.last_index(']') or { s.len }
+	index_min := s.index('[') or { return s }
+	index_max := s.last_index(']') or { return s }
 
 	return s[..index_min + 1] + s[index_max..]
 }
@@ -268,52 +278,6 @@ fn cipher_data_make_update<T>(t T) string {
 	return condition
 }
 
-// Hydrate a struture t T from data grab in lastest query on Redis
-fn (mut r Redis) hydrate<T>(mut t T) T {
-	allcontent := r.result.table[1].table
-	if allcontent.len == 0 {
-		return T{}
-	}
-	for k, c in allcontent {
-		// id := c.table[0].table[0].table[1].content
-		// label := c.table[0].table[1].table[1].table[0].content
-		content := c.table[0].table[2].table[1].table
-
-		for _, cc in content {
-			name_field := cc.table[0].content
-			value := cc.table[1].content
-
-			$for field in T.fields {
-				$if field.typ is int {
-					if field.name == name_field {
-						t.$(field.name) = value.int()
-						continue
-					}
-				}
-				$if field.typ is string {
-					if field.name == name_field {
-						t.$(field.name) = value
-						continue
-					}
-				}
-				$if field.typ is bool {
-					if field.name == name_field {
-						t.$(field.name) = value.bool()
-						continue
-					}
-				}
-				$if field.typ is f32 {
-					if field.name == name_field {
-						t.$(field.name) = value.f32()
-						continue
-					}
-				}
-			}
-		}
-	}
-	return t
-}
-
 // https://redis.io/commands/hello/
 // Want to check if Redis modules are well loaded by running the HELLO command
 // Result should be "Redis modules: ReJSON timeseries graph search bf"
@@ -370,7 +334,7 @@ pub fn (mut r Redis) result() string {
 		index = 1
 	}
 
-	for k, _ in r.result.table[index].table {
+	for k, c in r.result.table[index].table {
 		if r.result.table[index].table[k].content.len > 0 {
 			res := r.result.table[index].table[k].content
 			r.result.table[index].table[k].content = ''

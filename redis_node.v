@@ -1,16 +1,17 @@
 module redis
 
 pub fn (mut r Redis) node_create<T>(t T) bool {
-	db := r.db
 
 	data := cipher_data_format<T>(t)
 	label_name := typeof(t).name.trim('.')
 
 	if data.len == 0 {
+		println(t)
+		println("Data: $data")
 		panic('Redis is trying to create a node without data')
 	}
 
-	q := ("GRAPH.QUERY $db \"CREATE (x:$label_name {$data}) SET x.id = ID(x)\"")
+	q := ("GRAPH.QUERY $r.db \"CREATE (x:$label_name {$data}) SET x.id = ID(x)\"")
 	r.result = r.query(q)
 
 	if r.result.content.contains('errMsg') {
@@ -36,11 +37,10 @@ pub fn (mut r Redis) node_update<T>(mut t T) bool {
 	}
 
 	id := t.id
-	db := r.db
 	parameter := cipher_data_make_update<T>(t)
 	name := typeof(t).name.trim('&').trim('.')
 
-	q := ("GRAPH.QUERY $db \"MATCH (x:$name) WHERE ID(x)=$id SET $parameter\"")
+	q := ("GRAPH.QUERY $r.db \"MATCH (x:$name) WHERE ID(x)=$id SET $parameter\"")
 	r.result = r.query(q)
 
 	if r.result.content.contains('errMsg') {
@@ -55,11 +55,11 @@ pub fn (mut r Redis) node_load<T>(mut t T) T {
 	if t.id == 0 {
 		panic('Redis is trying to load a node without id')
 	}
-	db := r.db
+
 	id := t.id
 	name := typeof(t).name.trim('&').trim('.')
 
-	q := ("GRAPH.QUERY $db \"MATCH (x:$name) WHERE ID(x)=$id RETURN x\"")
+	q := ("GRAPH.QUERY $r.db \"MATCH (x:$name) WHERE ID(x)=$id RETURN x\"")
 	r.result = r.query(q)
 
 	if r.result.content.contains('errMsg') {
@@ -75,7 +75,7 @@ pub fn (mut r Redis) node_load<T>(mut t T) T {
 // Retireve an entry in DB following same similiraty that struct given in argument
 // The final goal is to be sure to not getting double entry when create some relation
 pub fn (mut r Redis) node_search<T>(mut t T) T {
-	db := r.db
+
 	name := typeof(t).name.trim('&').trim('.')
 	parameter := cipher_data_make_update<T>(t)
 	data := cipher_data_format<T>(t)
@@ -84,7 +84,7 @@ pub fn (mut r Redis) node_search<T>(mut t T) T {
 		panic('Redis is trying to search a node without parameter')
 	}
 
-	q := ("GRAPH.QUERY $db \"MATCH (x:$name{$data}) RETURN x\"")
+	q := ("GRAPH.QUERY $r.db \"MATCH (x:$name{$data}) RETURN x\"")
 
 	r.result = r.query(q)
 
@@ -98,17 +98,63 @@ pub fn (mut r Redis) node_search<T>(mut t T) T {
 	return r.hydrate(mut t)
 }
 
+// Hydrate a struture t T from data grab in lastest query on Redis
+fn (mut r Redis) hydrate<T>(mut t T) T {
+	allcontent := r.result.table[1].table
+	if allcontent.len == 0 {
+		return T{}
+	}
+	for k, c in allcontent {
+		// id := c.table[0].table[0].table[1].content
+		// label := c.table[0].table[1].table[1].table[0].content
+		content := c.table[0].table[2].table[1].table
+
+		for _, cc in content {
+			name_field := cc.table[0].content
+			value := cc.table[1].content
+
+			$for field in T.fields {
+				$if field.typ is int {
+					if field.name == name_field {
+						t.$(field.name) = value.int()
+						continue
+					}
+				}
+				$if field.typ is string {
+					if field.name == name_field {
+						t.$(field.name) = value
+						continue
+					}
+				}
+				$if field.typ is bool {
+					if field.name == name_field {
+						t.$(field.name) = value.bool()
+						continue
+					}
+				}
+				$if field.typ is f32 {
+					if field.name == name_field {
+						t.$(field.name) = value.f32()
+						continue
+					}
+				}
+			}
+		}
+	}
+	return t
+}
+
 // Delete node and relations
 pub fn (mut r Redis) node_delete<T>(mut t T) bool {
 	if t.id == 0 {
+		dump(t)
 		panic('Redis is trying to detach and delete some nodes without id')
 	}
 
-	db := r.db
 	id := t.id
 	name := typeof(t).name.trim('&').trim('.')
 
-	q := ("GRAPH.QUERY $db \"MATCH (x:$name) WHERE ID(x)=$id DELETE x\"")
+	q := ("GRAPH.QUERY $r.db \"MATCH (x:$name) WHERE ID(x)=$id DELETE x\"")
 	r.result = r.query(q)
 
 	if r.result.content.contains('errMsg') {

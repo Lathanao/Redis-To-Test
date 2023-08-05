@@ -4,7 +4,7 @@ import json
 import term
 
 const (
-	dbname = 'test_redis'
+	dbname = 'test_redis_relation'
 )
 
 pub struct Person {
@@ -15,6 +15,11 @@ pub mut:
 	id    int
 }
 
+pub struct Is_father {
+pub mut:
+	name  string
+}
+
 fn test_delete_db() {
 	mut r := new(dbname) or { panic(err) }
 	assert r.connected == true
@@ -23,96 +28,89 @@ fn test_delete_db() {
 		assert r.connected == false
 	}
 
-	for d in r.query('KEYS *').table.clone() {
+	for d in r.rawquery('KEYS *').table.clone() {
 		if d.content.match_glob('test_*') {
-			r.query('DEL ' + d.content)
+			r.rawquery('DEL ' + d.content)
 			assert r.result.content.int() == 1
 			assert r.result.table.len == 0
 			eprint(term.red('>>> Database ' + d.content + ' deleted') + '\n')
+		}else {
+			println(term.green('>>> Database ' + d.content + ' not deleted'))
 		}
 	}
 }
 
 fn test_node_create() {
 	mut r := new(dbname) or { panic(err) }
-	assert r.connected == true
 	defer {
 		r.close()
-		assert r.connected == false
 	}
 
 	leo := Person{
 		name: 'Leo'
 	}
-
+	lea := Person{
+		name: 'Lea'
+	}
+	tom := Person{
+		name: 'Tom'
+	}
 	r.node_create(leo)
+	r.node_create(lea)
+	r.node_create(tom)
 	assert r.node_exist(leo) == true
+	assert r.node_exist(lea) == true
+	assert r.node_exist(tom) == true
 }
 
-fn test_node_delete() {
+fn test_relation_create() {
 	mut r := new(dbname) or { panic(err) }
-	assert r.connected == true
 	defer {
 		r.close()
-		assert r.connected == false
 	}
 
-	lea := Person{
-		name: 'lea'
-	}
-	r.node_create(lea)
-	lea_node := r.node_search(lea)
-	assert r.node_exist(lea_node) == true
-
-	r.node_delete(lea_node)
-	assert r.node_exist(lea_node) == false
-}
-
-fn test_query_result_1() {
-	mut r := new(dbname) or { panic(err) }
-	assert r.connected == true
-	defer {
-		r.close()
-		assert r.connected == false
-	}
-
-	q := 'GRAPH.QUERY test_redis "MATCH (x:Person) RETURN count(x)"'
-	r.query(q)
-
-	assert r.result().int() == 1
-}
-
-fn test_node_update() {
-	mut r := new(dbname) or { panic(err) }
-	assert r.connected == true
-	defer {
-		r.close()
-		assert r.connected == false
-	}
-
-	leo := Person{
+	leo := r.node_search(Person{
 		name: 'Leo'
-	}
-	r.node_create(leo)
-	lea := Person{
+	})
+	lea := r.node_search(Person{
 		name: 'Lea'
+	})
+	tom := r.node_search(Person{
+		name: 'Tom'
+	})
+	is_father := Relation{@type:'is_father'}
+
+	r.relation_create(tom, is_father, lea)
+	res := r.relation_match(tom, is_father, lea)
+	println(res)
+
+
+}
+
+fn test_relation_match() {
+	mut r := new(dbname) or { panic(err) }
+	defer {
+		r.close()
 	}
-	r.node_create(lea)
 
-	criteria := Person{
-		name: 'Lea'
-	}
-	mut first_lea := r.node_search(criteria)
-	first_lea.name = 'Lea_modified'
-	first_lea.age = 20
+	r.node_create(Person{
+		name: 'Lucy'
+	})
+	r.node_create(Person{
+		name: 'Noe'
+	})
 
-	r.node_update(first_lea)
+	lucy := r.node_search(Person{
+		name: 'Lucy'
+	})
+	noe := r.node_search(Person{
+		name: 'Noe'
+	})
 
-	load_leo := r.node_load(first_lea)
-	assert load_leo.name == first_lea.name
-	assert load_leo.age == first_lea.age
+	is_mother := Relation{@type:'is_mother'}
 
-	search_leo := r.node_search(first_lea)
-	assert search_leo.name == first_lea.name
-	assert search_leo.age == first_lea.age
+	r.relation_create(lucy, is_mother, noe)
+	res := r.relation_match(Person{}, Relation{}, Person{})
+	println(res)
+
 }

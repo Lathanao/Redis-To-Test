@@ -29,6 +29,8 @@ fn test_delete_db() {
 			assert r.result.content.int() == 1
 			assert r.result.table.len == 0
 			eprint(term.red('>>> Database ' + d.content + ' deleted') + '\n')
+		}else {
+			println(term.green('>>> Database ' + d.content + ' not deleted'))
 		}
 	}
 }
@@ -51,6 +53,7 @@ fn test_hello() {
 // 	}
 
 // 	r.display_info() or {panic(err)}
+// 	r.display_version() or {panic(err)}
 // 	r.echo() or {panic(err)}
 // }
 
