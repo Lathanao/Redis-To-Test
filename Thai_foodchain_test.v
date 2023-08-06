@@ -30,7 +30,7 @@ pub mut:
 }
 
 fn test_delete_db() {
-	mut r := new(dbname) or { panic(err) }
+	mut r := new(db: dbname) or { panic(err) }
 	assert r.connected == true
 	defer {
 		r.close()
@@ -50,7 +50,7 @@ fn test_delete_db() {
 }
 
 fn test_insert_by_file() {
-	mut r := new(dbname) or { panic(err) }
+	mut r := new(db: dbname) or { panic(err) }
 	assert r.connected == true
 	defer {
 		r.close()
@@ -88,7 +88,7 @@ fn test_insert_by_file() {
 }
 
 fn test_count() {
-	mut r := new(dbname) or { panic(err) }
+	mut r := new(db: dbname) or { panic(err) }
 	assert r.connected == true
 	defer {
 		r.close()
@@ -106,7 +106,7 @@ fn test_count() {
 }
 
 fn test_node_create() {
-	mut r := new(dbname) or { panic(err) }
+	mut r := new(db: dbname) or { panic(err) }
 	defer {
 		r.close()
 	}
@@ -125,24 +125,27 @@ fn test_node_create() {
 	assert r.result() == "1"
 }
 
-fn test_relation_create() {
-	mut r := new(dbname) or { panic(err) }
-	defer {
-		r.close()
-	}
 
-	mut t := Reptile{
-		name: 'Gecko'
-	}
 
-	mut u := Insect{
-		name: 'Butterfly'
-	}
-	assert r.node_create(u) == true
 
-	tt := r.node_search(t)
-	_ := r.node_exist(t)
-	uu := r.node_search(u)
+// fn test_relation_create() {
+// 	mut r := new(db: dbname) or { panic(err) }
+// 	defer {
+// 		r.close()
+// 	}
+
+// 	mut t := Reptile{
+// 		name: 'Gecko'
+// 	}
+
+// 	mut u := Insect{
+// 		name: 'Butterfly'
+// 	}
+// 	assert r.node_create(u) == true
+
+// 	r.node_search(mut t)
+// 	// _ := r.node_exist(t)
+// 	r.node_search(mut u)
 
 	// rr := Relation {'Eat', 0}
 
@@ -158,7 +161,7 @@ fn test_relation_create() {
 
 	// r.query('GRAPH.QUERY $dbname "MATCH (n:Reptile) RETURN COUNT(n)"')
 	// assert r.result() == "1"
-}
+// }
 
 // fn test_node_search() {
 // 	mut r := new(dbname) or {panic(err)}

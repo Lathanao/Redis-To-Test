@@ -16,7 +16,7 @@ pub mut:
 }
 
 fn test_delete_db() {
-	mut r := new(dbname) or { panic(err) }
+	mut r := new(db: dbname) or { panic(err) }
 	assert r.connected == true
 	defer {
 		r.close()
@@ -26,9 +26,9 @@ fn test_delete_db() {
 	for d in r.rawquery('KEYS *').table.clone() {
 		if d.content.match_glob('test_*') {
 			r.rawquery('DEL ' + d.content)
-			assert r.result.content.int() == 1
+			assert r.result.content == "1"
 			assert r.result.table.len == 0
-			eprint(term.red('>>> Database ' + d.content + ' deleted') + '\n')
+			eprint(term.green('>>> Database ' + d.content + ' deleted') + '\n')
 		}else {
 			println(term.green('>>> Database ' + d.content + ' not deleted'))
 		}
@@ -36,7 +36,7 @@ fn test_delete_db() {
 }
 
 fn test_hello() {
-	mut r := new(dbname) or { panic(err) }
+	mut r := new(db: dbname) or { panic(err) }
 	assert r.connected == true
 	defer {
 		r.close()
@@ -127,9 +127,12 @@ fn test_cipher_data_make_condition() {
 	assert condition_1 == "x.name='Tom' AND x.age=20"
 
 	tom.id = 0
-
 	condition_2 := cipher_data_make_condition(tom)
 	assert condition_2 == "x.name='Tom' AND x.age=20"
+
+	tom.age = 0
+	condition_3 := cipher_data_make_condition(tom)
+	assert condition_3 == "x.name='Tom'"
 }
 
 // Format struct fields to string,
@@ -152,13 +155,16 @@ fn test_cipher_data_make_update() {
 	assert update_1 == "x.name='Tom', x.age=20"
 
 	tom.id = 0
-
 	update_2 := cipher_data_make_update(tom)
 	assert update_2 == "x.name='Tom', x.age=20"
+
+	tom.age = 0
+	update_3 := cipher_data_make_update(tom)
+	assert update_3 == "x.name='Tom', x.age=0"
 }
 
 fn test_change_db() {
-	mut r := new(dbname) or { panic(err) }
+	mut r := new(db: dbname) or { panic(err) }
 	assert r.connected == true
 	defer {
 		r.close()
@@ -190,33 +196,33 @@ fn test_change_db() {
 }
 
 fn test_query_result_1() {
-	mut r := new('test_result') or { panic(err) }
+	mut r := new(db: dbname) or { panic(err) }
 	assert r.connected == true
 	defer {
 		r.close()
 		assert r.connected == false
 	}
 
-	r.query('GRAPH.QUERY test_result "CREATE (x:Person {name:\'Lea\'}) SET x.id = ID(x)"')
+	r.query('GRAPH.QUERY $dbname "CREATE (x:Person {name:\'Lea\'}) SET x.id = ID(x)"')
 	assert r.result() == 'Labels added: 1'
 	assert r.result() == 'Nodes created: 1'
 	assert r.result() == 'Properties set: 2'
 	assert r.result() == 'Cached execution: 0'
 	assert r.result().contains('Query internal execution time') == true
 
-	r.query('GRAPH.QUERY test_result "CREATE (x:Person {name:\'Lea\'}) SET x.id = ID(x)"')
+	r.query('GRAPH.QUERY $dbname "CREATE (x:Person {name:\'Lea\'}) SET x.id = ID(x)"')
 	assert r.result() == 'Nodes created: 1'
 	assert r.result() == 'Properties set: 2'
 	assert r.result() == 'Cached execution: 1'
 	assert r.result().contains('Query internal execution time') == true
 
-	r.query('GRAPH.QUERY test_result "MATCH (x:Person) RETURN count(x)"')
+	r.query('GRAPH.QUERY $dbname "MATCH (x:Person) RETURN count(x)"')
 	assert r.result().int() == 2
 
-	r.query('GRAPH.QUERY test_result "CREATE (x:Person {name:\'Lea\'}) SET x.id = ID(x)"')
-	r.query('GRAPH.QUERY test_result "CREATE (x:Person {name:\'Lea\'}) SET x.id = ID(x)"')
-	r.query('GRAPH.QUERY test_result "CREATE (x:Person {name:\'Lea\'}) SET x.id = ID(x)"')
-	r.query('GRAPH.QUERY test_result "MATCH (x:Person) RETURN count(x)"')
+	r.query('GRAPH.QUERY $dbname "CREATE (x:Person {name:\'Lea\'}) SET x.id = ID(x)"')
+	r.query('GRAPH.QUERY $dbname "CREATE (x:Person {name:\'Lea\'}) SET x.id = ID(x)"')
+	r.query('GRAPH.QUERY $dbname "CREATE (x:Person {name:\'Lea\'}) SET x.id = ID(x)"')
+	r.query('GRAPH.QUERY $dbname "MATCH (x:Person) RETURN count(x)"')
 	assert r.result().int() == 5
 }
 
@@ -225,17 +231,17 @@ fn test_hydrate() {
 }
 
 fn test_error_socket_message() {
-	mut r := new('test_error_message') or { panic(err) }
+	mut r := new(db: 'test_error_message') or { panic(err) }
 	assert r.connected == true
 	defer {
 		r.close()
 		assert r.connected == false
 	}
 
-	r.rawquery('GRAPH.QUERY ${r.db} "CREATEE (x:Person {name=\'Lea\'})"')
+	r.rawquery('GRAPH.QUERY $r.db "CREATEE (x:Person {name=\'Lea\'})"')
 	assert r.result().contains("Invalid input")
 
-	r.rawquery('GRAPH.QUERY ${r.db} "CREATE (x:Person {name=\'Lea\'})"')
+	r.rawquery('GRAPH.QUERY $r.db "CREATE (x:Person {name=\'Lea\'})"')
 	assert r.result().contains("Invalid input")
 
 	r.rawquery('GRAPH.QUERY "CREATE (x:Person {name:\'Lea\'})"')
@@ -247,7 +253,7 @@ fn test_error_socket_message() {
 	r.query("CREATEE (x:Person {name=\'Lea\'})")
 	assert r.result().contains("Invalid input")
 
-	// r.query('CREATE (x:Person {name=\'Lea\'})"') 	// Socket answer is buggy because double quote
+	// r.query('CREATE (x:Person {name=\'Lea\'})"') 	// Socket answer is buggy
 	// assert r.result().contains("Protocol error")
 
 	r.query('CREATE (x:Person {name:Lea})')

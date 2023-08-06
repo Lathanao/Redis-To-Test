@@ -170,3 +170,9 @@ Find the animal most in danger
 Find the best meat
 Find the easy prey
 find error like Node with attbiute e.g. GRAPH.QUERY test_node_create "CREATE (x:Person {}) SET x.id = ID(x)"
+
+
+
+type
+return
+info

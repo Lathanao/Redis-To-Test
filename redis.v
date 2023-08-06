@@ -10,6 +10,7 @@ const (
 	label_alias      = 'x' // Alias needed in cypher condition like""x.name='Tom' AND x.age=20"
 	max_history_size = 1000
 	min_history_size = 500
+	default_id = -1
 )
 
 pub struct RedisGrab {
@@ -18,7 +19,8 @@ pub mut:
 	table   []RedisGrab
 }
 
-pub struct RedisCon {
+pub struct RedisConf {
+	db string   [required]
 	port int    = 6379
 	host string = '127.0.0.1'
 }
@@ -34,10 +36,10 @@ pub mut:
 	history []string
 }
 
-pub fn new(s string) ?&Redis {
+pub fn new(redisconf RedisConf) ?&Redis {
 	mut r := Redis{
-		address: RedisCon{}.host.str() + ':' + RedisCon{}.port.str()
-		db: s
+		address: redisconf.host.str() + ':' + redisconf.port.str()
+		db: redisconf.db
 	}
 	r.connect()?
 	return &r

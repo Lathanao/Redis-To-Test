@@ -31,7 +31,7 @@ fn test_delete_db() {
 	for d in r.rawquery('KEYS *').table.clone() {
 		if d.content.match_glob('test_*') {
 			r.rawquery('DEL ' + d.content)
-			assert r.result.content.int() == 1
+			assert r.result.content == "1"
 			assert r.result.table.len == 0
 			eprint(term.red('>>> Database ' + d.content + ' deleted') + '\n')
 		}else {

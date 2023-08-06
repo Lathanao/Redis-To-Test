@@ -8,14 +8,14 @@ const (
 
 pub struct Person {
 pub mut:
-	name  string
+	name  string [required]
 	age   int
 	child []Person
-	id    int
+	id    int = default_id
 }
 
 fn test_delete_db() {
-	mut r := new(dbname) or { panic(err) }
+	mut r := new(db: dbname) or { panic(err) }
 	assert r.connected == true
 	defer {
 		r.close()
@@ -25,9 +25,9 @@ fn test_delete_db() {
 	for d in r.rawquery('KEYS *').table.clone() {
 		if d.content.match_glob('test_*') {
 			r.rawquery('DEL ' + d.content)
-			assert r.result.content.int() == 1
+			assert r.result.content == "1"
 			assert r.result.table.len == 0
-			eprint(term.red('>>> Database ' + d.content + ' deleted') + '\n')
+			eprint(term.green('>>> Database ' + d.content + ' deleted') + '\n')
 		}else {
 			println(term.green('>>> Database ' + d.content + ' not deleted'))
 		}
@@ -35,21 +35,29 @@ fn test_delete_db() {
 }
 
 fn test_node_create() {
-	mut r := new(dbname) or { panic(err) }
+	mut r := new(db: dbname) or { panic(err) }
 	defer {
 		r.close()
 	}
 
-	leo := Person{
-		name: 'Leo'
+	r.node_create(Person{name: "Leo"})
+	r.rawquery("GRAPH.QUERY $r.db \"MATCH (x:Person{name:'Leo'}) RETURN COUNT(x)\"")
+	assert r.result() == "1"
+}
+
+fn test_node_create_2() {
+	mut r := new(db: dbname) or { panic(err) }
+	defer {
+		r.close()
 	}
 
-	r.node_create(leo)
-	assert r.node_exist(leo) == true
+	r.node_create(Person{name: "Leo"})
+	r.rawquery("GRAPH.QUERY $r.db \"MATCH (x:Person{name:'Leo'}) RETURN COUNT(x)\"")
+	assert r.result() == "2"
 }
 
 fn test_node_delete() {
-	mut r := new(dbname) or { panic(err) }
+	mut r := new(db: dbname) or { panic(err) }
 	defer {
 		r.close()
 	}
@@ -61,15 +69,17 @@ fn test_node_delete() {
 	}
 	r.node_create(leo)
 	r.node_create(lea)
+
 	lea_node := r.node_search(lea)
 	assert r.node_exist(lea_node) == true
+	assert lea_node.id == 3
 
 	r.node_delete(lea_node)
 	assert r.node_exist(lea_node) == false
 }
 
 fn test_change_db() {
-	mut r := new(dbname) or { panic(err) }
+	mut r := new(db: dbname) or { panic(err) }
 	defer {
 		r.close()
 	}
@@ -99,7 +109,7 @@ fn test_change_db() {
 }
 
 fn test_node_update() {
-	mut r := new(dbname) or { panic(err) }
+	mut r := new(db: dbname) or { panic(err) }
 	defer {
 		r.close()
 	}
